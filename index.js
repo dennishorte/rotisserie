@@ -6,15 +6,20 @@ var pg = require('pg');
 var parseurl = require('parseurl')
 var session = require('express-session')
 
-
 app.set('port', (process.env.PORT || 5000));
 
 app.use(express.static(__dirname + '/public'));
 app.use(session({
-  secret: 'keyboard cat',
+  store: new (require('connect-pg-simple')(session))(),
+  secret: 'reallybadsecret9824942', //process.env.FOO_COOKIE_SECRET,
   resave: false,
-  saveUninitialized: true
-}))
+  cookie: { maxAge: 30 * 24 * 60 * 60 * 1000 } // 30 days 
+}));
+// app.use(session({
+//   secret: 'keyboard cat',
+//   resave: false,
+//   saveUninitialized: true
+// }))
 app.use(function (req, res, next) {
   var views = req.session.views
 
